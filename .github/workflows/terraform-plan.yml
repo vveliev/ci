@@ -1,0 +1,87 @@
+---
+name: Terrafrorm plan
+
+on:
+  workflow_call:
+    secerts:
+      AWS_ACCESS_KEY_ID:
+        required: true
+        description: 'AWS Access Key ID'
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+        description: 'AWS Secret Access Key'
+        
+    inputs:
+      terraform_backend_region:
+        description: 'Terraform backend region'
+        required: false
+        default: 'us-east-1'
+        type: string
+      terraform_workdir:
+        description: 'Terraform working directory, where the terraform code will be executed'
+        required: false
+        default: './'
+        type: string
+      terraform_var_files:
+        description: 'List of terraform variable files to be used'
+        required: false
+        default: []
+        type: array
+      terraform_workspace:
+        description: 'Terraform workspace to be used'
+        required: false
+        default: 'default'
+        type: string
+      terraform_version:
+        description: 'Terraform version to be used'
+        required: false
+        default: '1.0.9'
+        type: string
+
+jobs:
+  plan:
+    name: Plan
+    # env:
+    #   TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform_version }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ${{ inputs.terraform_backend_region }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Initialize Terraform
+        run: |
+          cd ${{ inputs.terraform_workdir }}
+          terraform init -input=false
+
+      - name: Plan Terraform
+        id: plan
+        continue-on-error: true
+        run: |
+          cd ${{ inputs.terraform_workdir }}
+          terraform plan -input=false -no-color
+
+      - name: Post Plan to GitHub PR
+        uses: mshick/add-pr-comment@v1
+        with:
+          allow-repeats: true
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ## ${{ matrix.workflows }} plan
+            ```
+            ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+            ```
