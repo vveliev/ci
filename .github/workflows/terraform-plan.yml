@@ -3,38 +3,37 @@ name: Terrafrorm plan
 
 on:
   workflow_call:
-    secerts:
+    secrets:
       AWS_ACCESS_KEY_ID:
         required: true
-        description: 'AWS Access Key ID'
+        description: AWS Access Key ID
       AWS_SECRET_ACCESS_KEY:
         required: true
-        description: 'AWS Secret Access Key'
-        
+        description: AWS Secret Access Key
     inputs:
       terraform_backend_region:
-        description: 'Terraform backend region'
+        description: Terraform backend region
         required: false
         default: 'us-east-1'
         type: string
       terraform_workdir:
-        description: 'Terraform working directory, where the terraform code will be executed'
+        description: Terraform working directory, where the terraform code will be executed
         required: false
         default: './'
         type: string
       terraform_var_files:
-        description: 'List of terraform variable files to be used'
+        description: List of terraform variable files to be used
         required: false
         default: []
         type: array
       terraform_workspace:
-        description: 'Terraform workspace to be used'
-        required: false
+        description: Terraform workspace to be used
+        required: true
         default: 'default'
         type: string
       terraform_version:
-        description: 'Terraform version to be used'
-        required: false
+        description: Terraform version to be used
+        required: true
         default: '1.0.9'
         type: string
 
@@ -48,15 +47,15 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ inputs.terraform_version }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ inputs.terraform_backend_region }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
