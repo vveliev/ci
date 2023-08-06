@@ -14,27 +14,27 @@ on:
       terraform_backend_region:
         description: Terraform backend region
         required: false
-        default: 'us-east-1'
+        default: us-east-1
         type: string
       terraform_workdir:
         description: Terraform working directory, where the terraform code will be executed
         required: false
-        default: './'
+        default: ./
         type: string
       terraform_var_files:
         description: List of terraform variable files to be used
         required: false
-        default: []
-        type: array
+        default: ''
+        type: string
       terraform_workspace:
         description: Terraform workspace to be used
-        required: true
-        default: 'default'
+        required: false
+        default: default
         type: string
       terraform_version:
         description: Terraform version to be used
-        required: true
-        default: '1.0.9'
+        required: false
+        default: 1.0.9
         type: string
 
 jobs:
@@ -78,7 +78,6 @@ jobs:
         with:
           allow-repeats: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
           message: |
             ## ${{ matrix.workflows }} plan
             ```
