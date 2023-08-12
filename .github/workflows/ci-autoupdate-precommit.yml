@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 ---
-name: auto-update pre-commit 
+name: auto-update pre-commit
 
 'on':
   # every day at midnight

@@ -1,5 +1,5 @@
 ---
-name: auto-update github-actions 
+name: auto-update github-actions
 
 'on':
   # every day at midnight
