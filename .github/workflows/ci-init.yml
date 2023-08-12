@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+---
+name: ci repo initializer
+
+'on':
+  # every day at midnight
+  schedule:
+    - cron: 0 0 * * 0
+    # on demand
+  workflow_dispatch: null
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: name of the artifact to use
+        required: false
+        type: string
+        default: source-code
+    outputs:
+      version:
+        description: Semantic version of the repository, based on the privious tag
+        value: ${{ jobs.init.outputs.version }}
+      artifact:
+        description: name of the artifact
+        value: ${{ inputs.artifact_name }}
+
+permissions:
+  contents: read
+
+jobs:
+  init:
+    name: setup artifacts and version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: get version
+        id: version
+        run: |
+          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: setup artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ./

@@ -1,0 +1,8 @@
+{
+    "[yaml, yml]": {
+        "editor.tabSize": 2
+    },
+    "[javascript]": {
+        "editor.tabSize": 2
+    }
+}

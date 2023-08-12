@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
 ---
-name: Pre-commit auto-update
+name: auto-update pre-commit
 
 'on':
   # every day at midnight
   schedule:
     - cron: 0 0 * * 0
   # on demand
-  workflow_dispatch:
+  workflow_dispatch: null
+  workflow_call: null
 
 permissions:
   pull-requests: read
