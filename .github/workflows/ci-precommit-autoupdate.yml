@@ -6,7 +6,8 @@ name: Pre-commit auto-update
   schedule:
     - cron: 0 0 * * 0
   # on demand
-  workflow_dispatch:
+  workflow_dispatch: null
+  workflow_call: null
 
 permissions:
   pull-requests: read
