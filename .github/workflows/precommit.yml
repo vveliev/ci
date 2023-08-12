@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+---
+name: pre-commit
+
+permissions:
+  contents: read
+  pull-requests: write
+
+'on':
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_call:
+    inputs:
+      python_version:
+        description: Python version to use for pre-commit
+        required: false
+        type: string
+        default: '3.10'
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python_version }}
+      - uses: pre-commit/action@v3.0.0
