@@ -15,10 +15,10 @@ name: ci repo initializer
         description: name of the artifact to use
         required: false
         type: string
-        default: source-code 
+        default: source-code
     outputs:
-      version: 
-        description: Semantic version of the repository, based on the privious tag and the commits since then
+      version:
+        description: Semantic version of the repository, based on the privious tag
         value: ${{ jobs.init.outputs.version }}
       artifact:
         description: name of the artifact
@@ -26,7 +26,7 @@ name: ci repo initializer
 
 permissions:
   contents: read
-    
+
 jobs:
   init:
     name: setup artifacts and version
