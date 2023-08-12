@@ -79,7 +79,8 @@ jobs:
           allow-repeats: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
-            ## ${{ matrix.workflows }} plan
+            ## Terraform Plan for ${{ inputs.terraform_workdir }}
+            ### Workspace: ${{ inputs.terraform_workspace }}
             ```
             ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
             ```
