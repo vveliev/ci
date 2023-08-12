@@ -12,7 +12,7 @@ name: auto-update pre-commit
   workflow_call: null
 
 permissions:
-  pull-requests: read
+  pull-requests: write
   contents: read
 
 jobs:
