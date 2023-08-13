@@ -8,8 +8,6 @@ on:
   pull_request:
     types: [opened, reopened, edited, synchronize]
 
-
-
 permissions:
   pull-requests: write
   contents: read
