@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 # yamllint disable rule:truthy
+# yamllint disable rule:line-length
 ---
 on:
   workflow_call:
@@ -39,8 +40,6 @@ on:
       docker-registry-password:
         description: Docker registry password
         required: true
-
-
 
 permissions:
   contents: read
