@@ -1,7 +1,7 @@
 module.exports = {
     dryRun: false,
     branches: ['main'],
-    repositoryUrl: 'https://github.com/vveliev/template-repository',
+    repositoryUrl: 'https://github.com/vveliev/ci',
     plugins: [
         ['@semantic-release/commit-analyzer', {
             preset: 'angular',

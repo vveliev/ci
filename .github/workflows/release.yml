@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: |
-          git config --global --add safe.directory /__w/template-repository/template-repository &&
+          git config --global --add safe.directory /__w/ci/ci &&
           semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
