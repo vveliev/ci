@@ -4,19 +4,35 @@
 name: release
 "on": workflow_dispatch
 
+permissions:
+  # to be able to publish a GitHub release
+  contents: write
+  # to be able to comment on released issues
+  issues: write
+  # to be able to comment on released pull requests
+  pull-requests: write
+  # to enable use of OIDC for npm provenance
+  id-token: write
+
 jobs:
   release:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    container: ghcr.io/semantic-release:latest
+    name: release
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          persist-credentials: false
           fetch-depth: 0
-      - run: |
-          git config --global --add safe.directory /__w/ci/ci &&
-          semantic-release
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/changelog@6.0.0
+            @semantic-release/git@10.0.0
+            conventional-changelog-conventionalcommits@4.6.3
+            conventional-changelog-eslint@3.0.9
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAINTAINER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

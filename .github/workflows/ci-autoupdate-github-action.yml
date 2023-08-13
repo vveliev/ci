@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+# yamllint disable rule:truthy
 ---
 name: auto-update github-actions
 
-'on':
+on:
   # every day at midnight
   schedule:
     - cron: 0 0 * * 0

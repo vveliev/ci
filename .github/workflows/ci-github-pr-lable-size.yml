@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
+# yamllint disable rule:truthy
 ---
 name: Size
 
-'on':
+on:
   pull_request:
     types: [opened, reopened, edited, synchronize]
-  pull_request_target:
-    types: [opened, synchronize]
-
 
 permissions:
   pull-requests: write
