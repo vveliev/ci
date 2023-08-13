@@ -2,13 +2,33 @@
 # vim: ft=yaml
 # yamllint disable rule:truthy
 ---
-name: Conventional Commits PR title lint
+name: ci convanional commits PR title lint
 on:
-  pull_request_target:
-    types:
-      - opened
-      - edited
-      - synchronize
+  workflow_call:
+    inputs:
+      subject-types:
+        description: |
+          A list of subject types to lint. If not provided, all types will be linted.
+        required: false
+        default: |
+          fix
+          feat
+          build
+          chore
+          ci
+          docs
+          perf
+          refactor
+          revert
+          style
+          test
+        type: string
+      node-version:
+        description: |
+          The node version to use. If not provided, the latest version will be used.
+        required: false
+        default: 16
+        type: number
 
 permissions:
   pull-requests: write
@@ -18,8 +38,8 @@ jobs:
   conventional-commits-pr-title-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
       - uses: amannn/action-semantic-pull-request@v5
@@ -27,18 +47,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          types: |
-            fix
-            feat
-            build
-            chore
-            ci
-            docs
-            perf
-            refactor
-            revert
-            style
-            test
+          types: ${{ github.event.inputs.subject-types }}
       - uses: marocchino/sticky-pull-request-comment@v2
         # When the previous steps fails, the workflow would stop. By adding this
         # condition you can continue the execution with the populated error message.
