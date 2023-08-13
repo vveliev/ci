@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
+# yamllint disable rule:truthy
 ---
 name: Conventional Commits PR title lint
 on:
