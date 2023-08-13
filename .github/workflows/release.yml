@@ -16,17 +16,23 @@ permissions:
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    container: ghcr.io/semantic-release:latest
+    name: release
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
           persist-credentials: false
-      - run: |
-          git config --global --add safe.directory /__w/ci/ci &&
-          semantic-release
+          fetch-depth: 0
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/changelog@6.0.0
+            @semantic-release/git@10.0.0
+            conventional-changelog-conventionalcommits@4.6.3
+            conventional-changelog-eslint@3.0.9
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
