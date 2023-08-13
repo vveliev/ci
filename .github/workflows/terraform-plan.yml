@@ -71,7 +71,20 @@ jobs:
         continue-on-error: true
         run: |
           cd ${{ inputs.terraform_workdir }}
-          terraform plan -input=false -no-color
+          terraform plan -input=false -no-color -out=tfplan \
+          && terraform show -no-color tfplan
+
+      - name: Reformat Plan
+        run: |
+          echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
+          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+
+      - name: Put Plan in Env Var
+        run: |
+          PLAN=$(cat plan.txt)
+          echo "PLAN<<EOF" >> $GITHUB_ENV
+          echo "$PLAN" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Post Plan to GitHub PR
         uses: mshick/add-pr-comment@v2
@@ -81,6 +94,5 @@ jobs:
           message: |
             ## Terraform Plan for ${{ inputs.terraform_workdir }}
             ### Workspace: ${{ inputs.terraform_workspace }}
-            ```
-            ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
-            ```
+            ```diff
+            ${{ env.PLAN }}
