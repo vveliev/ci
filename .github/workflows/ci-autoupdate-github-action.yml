@@ -14,7 +14,7 @@ on:
 
 permissions:
   pull-requests: write
-  contents: read
+  contents: write
 
 jobs:
   autoupdate-gh-actions:
@@ -29,11 +29,3 @@ jobs:
           # [Required] Access token with `workflow` scope.
           token: '${{ secrets.GITHUB_TOKEN }}'
           skip_pull_request: true
-
-      - uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: update/github-actions
-          title: "chore: update github actions to latest version"
-          commit-message: "chore: update github action"
-          body: Update versions of github actions to latest version.
