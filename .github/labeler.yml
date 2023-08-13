@@ -5,7 +5,7 @@
 #
 # If a label includes a space or a pattern begins with an asterisk or
 # special character, enclose it in quotes.
-
+---
 'changes existing API':
 - changelog/*.breaking*.rst
 
