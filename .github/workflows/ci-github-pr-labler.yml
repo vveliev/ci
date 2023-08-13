@@ -2,7 +2,7 @@
 # vim: ft=yaml
 # yamllint disable rule:truthy
 ---
-name: Size
+name: labeler
 
 on:
   workflow_call: null
@@ -28,3 +28,5 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           labels: ${{ steps.size.outputs.new_label }}
+      - uses: actions/labeler@v4
+        id: triage
