@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  update_labels:
+  update-labels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 jobs:
-  auto-update:
+  auto-update-pre-commit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
