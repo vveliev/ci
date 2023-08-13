@@ -19,7 +19,7 @@ repos:
         args: [--fix=lf]
     stages: [commit-msg]
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.4.0
+    rev: v9.5.0
     hooks:
       - id: commitlint
         name: Check commit message using commitlint
@@ -39,7 +39,7 @@ repos:
         types: [shell]
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.29.0
+    rev: v1.32.0
     hooks:
       - id: yamllint
         name: Check YAML syntax with yamllint
@@ -48,6 +48,6 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.16.0
+    rev: v8.17.0
     hooks:
       - id: gitleaks
