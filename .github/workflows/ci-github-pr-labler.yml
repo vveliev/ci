@@ -2,7 +2,7 @@
 # vim: ft=yaml
 # yamllint disable rule:truthy
 ---
-name: labler
+name: labeler
 
 on:
   workflow_call: null
