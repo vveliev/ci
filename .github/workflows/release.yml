@@ -5,11 +5,11 @@ name: release
 "on": workflow_dispatch
 
 permissions:
-  # to be able to publish a GitHub release
+  # To Push Changes to the Repository
   contents: write
-  # to be able to comment on released issues
-  issues: write
-  # to be able to comment on released pull requests
+  # To Update GitHub Action workflow files
+  actions: write
+  # To Create Pull Requests
   pull-requests: write
   # to enable use of OIDC for npm provenance
   id-token: write
@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: Release
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
         with:
           semantic_version: 18.0.0
           extra_plugins: |
