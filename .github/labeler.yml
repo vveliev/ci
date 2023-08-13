@@ -1,0 +1,54 @@
+# This file defines which GitHub labels get applied when files
+# matching certain minimatch glob patterns are changed.
+#
+# Documentation: https://github.com/actions/labeler#pull-request-labeler
+#
+# If a label includes a space or a pattern begins with an asterisk or
+# special character, enclose it in quotes.
+
+'changes existing API':
+- changelog/*.breaking*.rst
+
+bug:
+- changelog/*.bugfix*.rst
+
+'CI':
+- .ci/**/*
+- .github/workflows/*test*.yml
+- .pre-commit-config.yaml
+
+
+dependencies:
+- package.txt
+
+docs:
+- .readthedocs.yml
+- changelog/*doc*.rst
+- docs/**/*
+- README.md
+
+'github-actions':
+- .github/**/*
+
+linters:
+- .sourcery.yaml
+- .pre-commit-config.yaml
+
+packaging:
+- .github/workflows/*publish*
+- .github/workflows/*release*
+- .zenodo*
+- CITATION.cff
+- LICENSE.md
+- MANIFEST.in
+- PATENT.md
+- pyproject.toml
+- setup.*
+
+testing:
+- '**/test*.py'
+- '**/conftest.py'
+- .github/workflows/weekly.yml
+- .codecov.yaml
+- noxfile.py
+- tox.ini
