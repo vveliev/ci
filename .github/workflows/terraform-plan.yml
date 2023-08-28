@@ -55,7 +55,7 @@ jobs:
           terraform_version: ${{ inputs.terraform_version }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-region: ${{ inputs.terraform_backend_region }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
