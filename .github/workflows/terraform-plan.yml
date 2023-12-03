@@ -69,16 +69,13 @@ jobs:
       - name: Initialize Terraform
         run: |
           cd ${{ inputs.terraform_workdir }}
-          terraform init -input=false
+          terraform init -input=false -backend-config=./terraform-config/aws/backend.tf
 
       - name: Plan Terraform
         id: plan
         continue-on-error: true
         run: |
           cd ${{ inputs.terraform_workdir }}
-          export TF_CLI_ARGS_plan="-compact-warnings"
-          export TF_CLI_ARGS_apply="-compact-warnings"
-          terraform init -reconfigure -backend-config=./terraform-config/aws/backend.tf
           terraform plan -input=false -no-color -out=tfplan \
           && terraform show -no-color tfplan
 
