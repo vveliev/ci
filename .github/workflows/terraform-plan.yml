@@ -16,6 +16,11 @@ name: Terrafrorm plan
         required: false
         default: us-east-1
         type: string
+      terraform_backend_config_file:
+        description: Terraform backend configuration
+        required: false
+        default: ''
+        type: string
       terraform_workdir:
         description: Terraform working directory, where the terraform code will be executed
         required: false
@@ -71,6 +76,9 @@ jobs:
         continue-on-error: true
         run: |
           cd ${{ inputs.terraform_workdir }}
+          export TF_CLI_ARGS_plan="-compact-warnings"
+          export TF_CLI_ARGS_apply="-compact-warnings"
+          terraform init -reconfigure -backend-config=./terraform-config/aws/backend.tf
           terraform plan -input=false -no-color -out=tfplan \
           && terraform show -no-color tfplan
 
