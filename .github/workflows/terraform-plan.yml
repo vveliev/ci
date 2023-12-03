@@ -19,7 +19,7 @@ name: Terrafrorm plan
       terraform_backend_config_file:
         description: Terraform backend configuration
         required: false
-        default: ''
+        default: 'backend.tf'
         type: string
       terraform_workdir:
         description: Terraform working directory, where the terraform code will be executed
@@ -69,7 +69,7 @@ jobs:
       - name: Initialize Terraform
         run: |
           cd ${{ inputs.terraform_workdir }}
-          terraform init -input=false -backend-config=./terraform-config/aws/backend.tf
+          terraform init -input=false -backend-config=${{ inputs.terraform_backend_config_file }}
 
       - name: Plan Terraform
         id: plan
