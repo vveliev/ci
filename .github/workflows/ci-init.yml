@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
       - name: setup artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.artifact_name }}
           path: ./
