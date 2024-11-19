@@ -70,9 +70,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - id: repository-to-lower-case
+      - id: set-repo-name
         run: |
-          echo "value=${{ github.repository }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+          REPO_NAME="${{ inputs.docker-registry }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          echo "repo_name=$REPO_NAME" >> $GITHUB_ENV
           
       - name: Build the Docker image
         uses: docker/build-push-action@v5
@@ -82,14 +83,14 @@ jobs:
           target: ${{ inputs.target }}
           push: ${{ inputs.push }}
           no-cache: true
-          tags: ${{ inputs.docker-registry }}/${{ github.repository }}:${{ inputs.version }}
+          tags: ${{ env.repo_name }}:${{ inputs.version }}
       
       - name: Tag and push
         run: |
           tags="${{ inputs.tags }}"
-          echo "Tagging and publishing ${{ inputs.docker-registry }}/${{ github.repository }}:${{ inputs.version }} with tags: $tags"
+          echo "Tagging and publishing ${{ env.repo_name }}:${{ inputs.version }} with tags: $tags"
           IFS=',' read -ra tags <<< "$tags"
           for tag in "${tags[@]}"; do
-            docker tag ${{ inputs.docker-registry }}/${{ github.repository }}:${{ inputs.version }} ${{ inputs.docker-registry }}/${{ github.repository }}:$tag
-            docker push ${{ inputs.docker-registry }}/${{ github.repository }}:$tag
+            docker tag ${{ env.repo_name }}:${{ inputs.version }} ${{ env.repo_name }}:$tag
+            docker push ${{ env.repo_name }}:$tag
           done
