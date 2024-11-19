@@ -70,6 +70,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - id: repository-to-lower-case
+        run: |
+          echo "value=${{ github.repository }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+          
       - name: Build the Docker image
         uses: docker/build-push-action@v5
         with:
