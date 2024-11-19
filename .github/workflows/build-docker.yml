@@ -93,9 +93,9 @@ jobs:
         run: |
           tags="${{ inputs.tags }}"
           echo "Tagging and publishing ${{ env.repo_name }}:${{ inputs.version }} with tags: $tags"
-          IFS=',' read -ra tags <<< "$tags"
+          IFS=',' read -ra tags_array <<< "$tags"
           docker pull ${{ env.repo_name }}:${{ inputs.version }}
-          for tag in "${tags[@]}"; do
+          for tag in "${tags_array[@]}"; do
             docker tag ${{ env.repo_name }}:${{ inputs.version }} ${{ env.repo_name }}:$tag
             docker push ${{ env.repo_name }}:$tag
           done
