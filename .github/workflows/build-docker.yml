@@ -96,6 +96,7 @@ jobs:
           IFS=',' read -ra tags_array <<< "$tags"
           docker pull ${{ env.repo_name }}:${{ inputs.version }}
           for tag in "${tags_array[@]}"; do
+            tag=$(echo $tag | xargs)  # Trim any leading/trailing whitespace
             docker tag ${{ env.repo_name }}:${{ inputs.version }} ${{ env.repo_name }}:$tag
             docker push ${{ env.repo_name }}:$tag
           done
