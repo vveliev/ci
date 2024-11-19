@@ -11,6 +11,10 @@ on:
         required: false
         type: string
         default: ghcr.io
+      repository:
+        description: Docker repository
+        required: true
+        type: string
       docker-registry-username:
         description: Docker registry username
         required: false
@@ -72,7 +76,7 @@ jobs:
 
       - id: set-repo-name
         run: |
-          REPO_NAME="${{ inputs.docker-registry }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          REPO_NAME="${{ inputs.docker-registry }}/$(echo "${{ inputs.repository }}" | tr '[:upper:]' '[:lower:]')"
           echo "repo_name=$REPO_NAME" >> $GITHUB_ENV
           
       - name: Build the Docker image
