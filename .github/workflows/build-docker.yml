@@ -78,7 +78,7 @@ jobs:
         run: |
           REPO_NAME="${{ inputs.docker-registry }}/$(echo "${{ inputs.repository }}" | tr '[:upper:]' '[:lower:]')"
           echo "repo_name=$REPO_NAME" >> $GITHUB_ENV
-          
+
       - name: Build the Docker image
         uses: docker/build-push-action@v5
         with:
@@ -88,7 +88,7 @@ jobs:
           push: ${{ inputs.push }}
           no-cache: true
           tags: ${{ env.repo_name }}:${{ inputs.version }}
-      
+
       - name: Tag and push
         run: |
           tags="${{ inputs.tags }}"
