@@ -36,6 +36,11 @@ on:
         required: false
         type: boolean
         default: true
+      docker_tags:
+        description: List of tags to apply to the built image
+        required: false
+        type: string
+        default: 'latest'
     secrets:
       docker-registry-password:
         description: Docker registry password
@@ -69,4 +74,7 @@ jobs:
           no-cache: true
           file: ${{ inputs.dockerfile }}
           target: ${{ inputs.target }}
-          tags: ${{ inputs.docker-registry }}/${{  steps.repository-to-lower-case.outputs.value }}:latest
+          tags: |
+            ${{ inputs.docker_tags }} | jq -r '.[]' | while read tag; do
+              echo "${{ inputs.docker-registry }}/${{ steps.repository-to-lower-case.outputs.value }}:$tag"
+            done
