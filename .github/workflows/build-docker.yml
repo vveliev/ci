@@ -49,6 +49,11 @@ on:
         required: false
         type: string
         default: "latest"
+      runs-on:
+        description: Select github runner based on labels, default is "['ubuntu-latest']"
+        required: false
+        type: string
+        default: "['ubuntu-latest']"
     secrets:
       docker-registry-password:
         description: Docker registry password
@@ -60,7 +65,7 @@ permissions:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJson(inputs.runs-on) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -80,7 +85,7 @@ jobs:
           echo "repo_name=$REPO_NAME" >> $GITHUB_ENV
 
       - name: Build the Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
