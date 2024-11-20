@@ -16,6 +16,16 @@ name: ci repo initializer
         required: false
         type: string
         default: source-code
+      artifact_upload:
+        description: upload artifact
+        required: false
+        type: boolean
+        default: true
+      runner_label:
+        description: Select github runner based on labels
+        required: false
+        type: string
+        default: "['ubuntu-latest']"
     outputs:
       version:
         description: Semantic version of the repository, based on the privious tag
@@ -30,7 +40,7 @@ permissions:
 jobs:
   init:
     name: setup artifacts and version
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJson(inputs.runner_label) }}
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -41,9 +51,9 @@ jobs:
       - name: get version
         id: version
         run: |
-          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
-      - name: setup artifacts
-        uses: actions/upload-artifact@v4
+          echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.artifact_upload }}
         with:
           name: ${{ inputs.artifact_name }}
           path: ./
