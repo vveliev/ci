@@ -21,8 +21,8 @@ name: ci repo initializer
         required: false
         type: boolean
         default: true
-      runner_label:
-        description: Select github runner based on labels
+      runs-on:
+        description: Select github runner based on labels, default is "['ubuntu-latest']"
         required: false
         type: string
         default: "['ubuntu-latest']"
@@ -40,7 +40,7 @@ permissions:
 jobs:
   init:
     name: setup artifacts and version
-    runs-on: ${{ fromJson(inputs.runner_label) }}
+    runs-on: ${{ fromJson(inputs.runs-on) }}
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
