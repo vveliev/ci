@@ -15,6 +15,7 @@ on:
         description: Docker repository
         required: true
         type: string
+        default: ${{ github.repository }}
       docker-registry-username:
         description: Docker registry username
         required: false
