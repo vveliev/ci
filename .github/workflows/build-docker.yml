@@ -13,7 +13,7 @@ on:
         default: ghcr.io
       repository:
         description: Docker repository
-        required: true
+        required: false
         type: string
         default: ${{ github.repository }}
       docker-registry-username:
