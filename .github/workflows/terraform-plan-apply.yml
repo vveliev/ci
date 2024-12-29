@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 name: Terrafrorm plan
 
@@ -45,8 +46,6 @@ name: Terrafrorm plan
 jobs:
   plan:
     name: Plan
-    # env:
-    #   TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -94,7 +93,6 @@ jobs:
           echo "PLAN<<EOF" >> $GITHUB_ENV
           echo "$PLAN" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
 
       - name: Post Plan to GitHub PR
         if: inputs.terraform_apply == 'false'
