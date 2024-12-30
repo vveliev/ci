@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 name: Terrafrorm plan
 
@@ -36,12 +37,15 @@ name: Terrafrorm plan
         required: false
         default: 1.0.9
         type: string
+      terraform_apply:
+        description: Whether to apply the plan or not
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   plan:
     name: Plan
-    # env:
-    #   TF_VAR_allowed_account_id: ${{ secrets.ALLOWED_ACCOUNT_ID }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -74,6 +78,10 @@ jobs:
           terraform plan -input=false -no-color -out=tfplan \
           && terraform show -no-color tfplan
 
+      # Sed is taking all lines that begin with one or more spaces followed by a `+` or `-`.
+      # It stores the amount of spaces in `\1` and the +/- in `\2`.
+      # Then replace that portion of the line with `\2\1`
+      # (+/- followed by the number of matched spaces).
       - name: Reformat Plan
         run: |
           echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
@@ -87,6 +95,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Post Plan to GitHub PR
+        if: inputs.terraform_apply == 'false'
         uses: mshick/add-pr-comment@v2
         with:
           allow-repeats: true
@@ -96,3 +105,51 @@ jobs:
             ### Workspace: ${{ inputs.terraform_workspace }}
             ```diff
             ${{ env.PLAN }}
+            ```
+
+      - name: Apply Terraform
+        if: steps.plan.outcome == 'success'
+        id: apply
+        continue-on-error: true
+        run: |
+          cd ${{ inputs.terraform_workdir }}
+          terraform apply \
+            -input=false \
+            -no-color \
+            tfplan
+
+      - name: Post Plan and Apply to GitHub PR
+        if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            Applying ** ${{ inputs.terraform_workdir }}**:
+
+            ```
+            ${{ steps.apply.outputs.stdout }}
+            ```
+
+      - name: Post Plan Failure
+        if: steps.plan.outcome == 'failure'
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            Plan failed for ** ${{ inputs.terraform_workdir }}**:
+
+            ```
+            ${{ steps.plan.outputs.stderr }}
+            ```
+
+      - name: Post Apply Failure
+        if: steps.apply.outcome == 'failure'
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            Apply failed for ** ${{ inputs.terraform_workdir }}**:
+
+            ```
+            ${{ steps.apply.outputs.stderr }}
+            ```

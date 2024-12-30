@@ -1,0 +1,155 @@
+# yamllint disable rule:line-length
+---
+name: Terrafrorm plan
+
+'on':
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+        description: AWS Access Key ID
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+        description: AWS Secret Access Key
+    inputs:
+      tofu_backend_region:
+        description: tofu backend region
+        required: false
+        default: us-east-1
+        type: string
+      tofu_workdir:
+        description: tofu working directory, where the tofu code will be executed
+        required: false
+        default: ./
+        type: string
+      tofu_var_files:
+        description: List of tofu variable files to be used
+        required: false
+        default: ''
+        type: string
+      tofu_workspace:
+        description: tofu workspace to be used
+        required: false
+        default: default
+        type: string
+      tofu_version:
+        description: tofu version to be used
+        required: false
+        default: 1.6.0
+        type: string
+      tofu_apply:
+        description: Whether to apply the plan or not
+        required: false
+        default: false
+        type: boolean
+      version_tag:
+        description: The version tag for application deployment (docker image tag)
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    env:
+      TF_VAR_version_tag: ${{ inputs.version_tag }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup tofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ inputs.tofu_version }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ inputs.tofu_backend_region }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Initialize tofu
+        run: |
+          cd ${{ inputs.tofu_workdir }}
+          tofu init -input=false
+
+      - name: Plan tofu
+        id: plan
+        continue-on-error: true
+        run: |
+          cd ${{ inputs.tofu_workdir }}
+          tofu plan -input=false -no-color -out=tfplan \
+            -var-file="${{ inputs.tofu_var_files }}" \
+          && tofu show -no-color tfplan
+
+      # Sed is taking all lines that begin with one or more spaces followed by a `+` or `-`.
+      # It stores the amount of spaces in `\1` and the +/- in `\2`.
+      # Then replace that portion of the line with `\2\1`
+      # (+/- followed by the number of matched spaces).
+      - name: Reformat Plan
+        if: inputs.tofu_apply == false
+        run: |
+          echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
+          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+
+      - name: Put Plan in Env Var
+        if: inputs.tofu_apply == false
+        run: |
+          PLAN=$(cat plan.txt)
+          echo "PLAN<<EOF" >> $GITHUB_ENV
+          echo "$PLAN" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Post Plan to GitHub PR
+        if: inputs.tofu_apply == false
+        uses: mshick/add-pr-comment@v2
+        with:
+          allow-repeats: true
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            ## tofu Plan for ${{ inputs.tofu_workdir }}
+            ### Workspace: ${{ inputs.tofu_workspace }}
+
+            ```diff
+            ${{ env.PLAN }}
+            ```
+
+      - name: Apply tofu
+        if: steps.plan.outcome == 'success'
+        id: apply
+        continue-on-error: true
+        run: |
+          cd ${{ inputs.tofu_workdir }}
+          tofu apply \
+            -input=false \
+            -no-color \
+            -auto-approve \
+            tfplan
+
+      - name: Post Plan and Apply to GitHub PR
+        if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            Applying ** ${{ inputs.tofu_workdir }}**:
+
+            ```
+            ${{ steps.apply.outputs.stdout }}
+            ```
+
+      - name: Post Apply Failure
+        if: steps.apply.outcome == 'failure'
+        uses: mshick/add-pr-comment@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            Apply failed for ** ${{ inputs.tofu_workdir }}**:
+
+            ```
+            ${{ steps.apply.outputs.stderr }}
+            ```
