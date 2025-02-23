@@ -24,6 +24,11 @@ permissions:
         required: false
         type: string
         default: ''
+      flutter_version:
+        description: Flutter version to use for pre-commit
+        required: false
+        type: string
+        default: ''
 
 jobs:
   pre-commit:
@@ -38,4 +43,9 @@ jobs:
         uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ inputs.dart_version }}
+      - name: Set up Flutter
+        if: ${{ inputs.flutter_version != '' }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ inputs.flutter_version }}
       - uses: pre-commit/action@v3.0.1
