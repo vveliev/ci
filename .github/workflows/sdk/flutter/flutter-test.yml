@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+# yamllint disable rule:truthy
+#
+# This is a GitHub Actions workflow file that runs tests for a Flutter project.
+---
+name: Flutter Test
+on:
+  workflow_call:
+    inputs:
+      flutter_version:
+        description: Flutter version to use for pre-commit
+        required: false
+        type: string
+        default: ''
+      workdir:
+        description: Directory to run the tests in
+        required: false
+        type: string
+        default: '.'
+      testdir:
+        description: Directory to run the tests in
+        required: false
+        type: string
+        default: 'test'
+      minimum-coverage:
+        description: Minimum coverage percentage
+        required: false
+        type: number
+        default: 80
+      coverage-files:
+        description: Coverage files to use
+        required: false
+        type: string
+        default: 'coverage/lcov.info'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      if: ${{ inputs.flutter_version != '' }}
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ inputs.flutter_version }}
+
+    - name: Install dependencies
+      run: flutter pub get --enforce-lockfile
+      working-directory: ${{ inputs.workdir }}
+
+    - name: Run tests
+      run: flutter test ${{ inputs.testdir }} --coverage
+      working-directory: ${{ inputs.workdir }}
+      continue-on-error: true
+
+    - name: Setup LCOV
+      uses: hrishikesh-kadam/setup-lcov@v1
+      with:
+        ref: 'v2.3'
+
+    - name: Verify coverage file exists
+      run: |
+        if [ ! -f ${{ inputs.coverage-files }} ]; then
+          echo "Coverage file not found: ${{ inputs.coverage-files }}"
+          exit 1
+        fi
+      working-directory: ${{ inputs.workdir }}
+
+    - name: Report Code Coverage
+      uses: vveliev/github-actions-report-lcov@main
+      with:
+        coverage-files: "${{ inputs.coverage-files }}"
+        minimum-coverage: ${{ inputs.minimum-coverage }}
+        artifact-name: code-coverage-report
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ${{ inputs.workdir }}
+        update-comment: false
