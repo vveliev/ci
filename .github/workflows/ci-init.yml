@@ -28,7 +28,7 @@ name: ci repo initializer
         default: "['ubuntu-latest']"
     outputs:
       version:
-        description: Semantic version of the repository, based on the privious tag
+        description: Semantic version of the repository, based on the previous tag
         value: ${{ jobs.init.outputs.version }}
       artifact:
         description: name of the artifact
@@ -56,4 +56,7 @@ jobs:
         if: ${{ inputs.artifact_upload }}
         with:
           name: ${{ inputs.artifact_name }}
-          path: ./
+          path: |
+            ./
+            !.git/**
+            !.github/**

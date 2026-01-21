@@ -7,12 +7,10 @@ name: release
 permissions:
   # To Push Changes to the Repository
   contents: write
-  # To Update GitHub Action workflow files
-  actions: write
   # To Create Pull Requests
   pull-requests: write
-  # to enable use of OIDC for npm provenance
-  id-token: write
+  # To Comment on Issues/PRs (semantic-release)
+  issues: write
 
 jobs:
   release:

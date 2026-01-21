@@ -1,6 +1,6 @@
-# Continious integration pack
+# Continuous integration pack
 
-Collection of scripts to help with the continious integration of the project.
+Collection of scripts to help with the continuous integration of the project.
 
 
 [![pre-commit.ci status](https://github.com/vveliev/ci/actions/workflows/precommit.yml/badge.svg)](https://github.com/vveliev/ci/actions/workflows/precommit.yml)
@@ -15,5 +15,32 @@ The GitHub Actions are defined in the [`.github/workflows`](.github/workflows) f
 ### Collection
 
 - [**`ci-init.yml`**](.github/workflows/ci-init.yml): Clone repository calculate the version and create source-code artifacts.
-- [**`ci-autoupdate-github-actions.yml`**](.github/workflows/ci-autoupdate-github-actions.yml): Update the GitHub Actions workflow files.
+- [**`ci-autoupdate-github-action.yml`**](.github/workflows/ci-autoupdate-github-action.yml): Update the GitHub Actions workflow files.
 - [**`ci-autoupdate-precommit.yml`**](.github/workflows/ci-autoupdate-precommit.yml): Update the pre-commit configuration file.
+
+> Note: The `ci-init.yml` workflow is scheduled weekly (Sunday at 00:00 UTC).
+
+### Usage
+
+#### Initialize artifacts and version
+
+Example usage from another workflow via `workflow_call`:
+
+```yaml
+jobs:
+	init:
+		uses: vveliev/ci/.github/workflows/ci-init.yml@main
+		with:
+			artifact_name: source-code
+			artifact_upload: true
+			runs-on: "['ubuntu-latest']"
+```
+
+Outputs:
+
+- `version`: semantic version from tags
+- `artifact`: artifact name (defaults to `source-code`)
+
+#### Release
+
+Release is triggered manually via `workflow_dispatch` in [release workflow](.github/workflows/release.yml).
