@@ -28,12 +28,12 @@ Example usage from another workflow via `workflow_call`:
 
 ```yaml
 jobs:
-	init:
-		uses: vveliev/ci/.github/workflows/ci-init.yml@main
-		with:
-			artifact_name: source-code
-			artifact_upload: true
-			runs-on: "['ubuntu-latest']"
+  init:
+    uses: vveliev/ci/.github/workflows/ci-init.yml@main
+    with:
+      artifact_name: source-code
+      artifact_upload: true
+      runs-on: "['ubuntu-latest']"
 ```
 
 Outputs:
