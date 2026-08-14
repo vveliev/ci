@@ -3,12 +3,14 @@
 ---
 name: ci repo initializer
 
+# workflow_call only. This is a building block other workflows call, not
+# something to run on its own: every job below reads `inputs`, and the
+# `inputs` context is populated only for workflow_call. On a schedule or
+# workflow_dispatch trigger `inputs.runs-on` is the empty string, so
+# `fromJson('')` fails to parse and the run dies at startup with no jobs
+# and no log — which is what the weekly cron did every Sunday. Running it
+# standalone would only upload the repository to itself as an artifact.
 'on':
-  # every day at midnight
-  schedule:
-    - cron: 0 0 * * 0
-    # on demand
-  workflow_dispatch: null
   workflow_call:
     inputs:
       artifact_name:
@@ -45,14 +47,14 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: get version
         id: version
         run: |
           echo "version=$(git describe --tags --always)" >> $GITHUB_OUTPUT
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ inputs.artifact_upload }}
         with:
           name: ${{ inputs.artifact_name }}
