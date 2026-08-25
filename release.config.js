@@ -38,7 +38,7 @@ module.exports = {
                     case `feat`:
                         commit.type = `Features`
                         break
-                    case `test`:
+                    case `fix`:
                         commit.type = `Bug Fixes`
                         break
                     case `perf`:
