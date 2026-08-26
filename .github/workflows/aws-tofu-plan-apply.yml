@@ -70,7 +70,7 @@ jobs:
           tofu_version: ${{ inputs.tofu_version }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-region: ${{ inputs.tofu_backend_region }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
