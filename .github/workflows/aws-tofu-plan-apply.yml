@@ -62,7 +62,7 @@ jobs:
       TF_VAR_version_tag: ${{ inputs.version_tag }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup tofu
         uses: opentofu/setup-opentofu@v1
