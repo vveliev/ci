@@ -110,7 +110,7 @@ jobs:
 
       - name: Post Plan to GitHub PR
         if: inputs.tofu_apply == false
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         with:
           allow-repeats: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: Post Plan and Apply to GitHub PR
         if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
@@ -148,7 +148,7 @@ jobs:
 
       - name: Post Apply Failure
         if: steps.apply.outcome == 'failure'
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
