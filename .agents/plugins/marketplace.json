@@ -1,0 +1,25 @@
+{
+  "name": "claude-harness",
+  "interface": {
+    "displayName": "Claude Harness"
+  },
+  "plugins": [
+    {
+      "name": "fleet-harness",
+      "source": {
+        "source": "git-subdir",
+        "url": "git@github.com:vveliev/claude-harness.git",
+        "path": "./plugins/fleet-harness",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
+      "interface": {
+        "displayName": "Fleet Harness"
+      }
+    }
+  ]
+}

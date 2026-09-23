@@ -1,0 +1,2 @@
+[plugins."fleet-harness@claude-harness"]
+enabled = true
