@@ -22,9 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # GITHUB_TOKEN cannot push changes under .github/workflows.
+          token: '${{ secrets.WORKFLOW_UPDATE_TOKEN }}'
 
       - name: Run GitHub Actions Version Updater
         uses: saadmk11/github-actions-version-updater@v1.0.1
         with:
-          # [Required] Access token with `workflow` scope.
-          token: '${{ secrets.GITHUB_TOKEN }}'
+          # PAT with contents, workflows, and pull-request write access.
+          token: '${{ secrets.WORKFLOW_UPDATE_TOKEN }}'
